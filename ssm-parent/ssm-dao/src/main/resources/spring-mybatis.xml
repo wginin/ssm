@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <!--数据源-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <!--用户名-->
+        <property name="username" value="root" />
+        <!--密码-->
+        <property name="password" value="root" />
+        <!--url-->
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/ssm" />
+        <!--驱动-->
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+    </bean>
+
+    <!--SqlSessionFactoryBean-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--数据源-->
+        <property name="dataSource" ref="dataSource" />
+
+        <!--配置MyBatis拦截器[分页插件]-->
+        <property name="plugins">
+            <array>
+                <!--分页插件-->
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <!--配置PageHelper分页插件的属性-->
+                    <property name="properties">
+                        <props>
+                            <!--配置方言，指定数据库类型-->
+                            <prop key="helperDialect">oracle</prop>
+                            <!--分页合理化参数，默认值为false。当该参数设置为 true 时，pageNum<=0 时会查询第一页， pageNum>pages（超过总数时），会查询最后一页。默认false 时，直接根据参数进行查询。-->
+                            <prop key="reasonable">true</prop>
+                        </props>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!--MapperScannerConfigure-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--dao接口的位置-->
+        <property name="basePackage" value="com.itheima.dao" />
+    </bean>
+
+</beans>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--
+        SpringSecurity配置
+     -->
+
+    <!--取消静态资源或者公开连接的安全控制-->
+    <security:http pattern="/css/**" security="none" />
+    <security:http pattern="/img/**" security="none" />
+    <security:http pattern="/plugins/**" security="none" />
+
+    <security:http pattern="/*.jsp" security="none" />
+    <!--
+     <security:http pattern="/403.jsp" security="none" />
+     <security:http pattern="/404.jsp" security="none" />
+     <security:http pattern="/500.jsp" security="none" />
+     <security:http pattern="/failer.jsp" security="none" />
+     <security:http pattern="/index.jsp" security="none" />
+     <security:http pattern="/login.jsp" security="none" />
+   -->
+
+
+
+    <!--
+        URL地址控制
+        auto-config:自动配置，会使用默认的配置风格，同时会配置10个功能过滤器
+        use-expressions:是否使用SpELl表达式
+                       false:access="ROLE_USER"
+                       true:access="hasRole('ROLE_USER')"
+    -->
+    <security:http auto-config="true" use-expressions="true">
+        <!--
+            url拦截器
+                pattern="/**":拦截所有请求
+                access="ROLE_USER":指访问任何路径都需要ROLE_USER这个角色
+        -->
+        <security:intercept-url
+            pattern="/**"
+            access="hasAnyRole('ROLE_ADMIN','ROLE_USER')"
+        />
+
+        <!--access="hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')"-->
+
+        <!--
+            access="ROLE_USER,ROLE_ADMIN"
+        -->
+
+        <!--
+            登录控制
+            login-page="/login.html":登录的默认页面配置
+            default-target-url="/success.html":登录成功后跳转地址：前提是用户直接访问了登录页面，而不是从其他页面来的
+            always-use-default-target="true":表示无论登录之前从哪里跳转过来登录的，登录成功之后都跳转到默认指定页面
+            authentication-failure-url="/failer.html":登录失败跳转页面
+            login-processing-url="/login":该地址可以不用指定
+        -->
+        <security:form-login
+            login-page="/login.jsp"
+            default-target-url="/pages/main"
+            authentication-failure-url="/failer.jsp"
+            login-processing-url="/login"
+            always-use-default-target="true"
+        />
+
+        <!--
+            登出配置
+            logout-success-url="/login.html":登出后跳转的地址
+            invalidate-session="true":销毁当前Session
+        -->
+        <security:logout
+                logout-success-url="/login.jsp"
+                invalidate-session="true"
+        />
+
+        <!--
+            关闭csrf
+        -->
+        <security:csrf disabled="true" />
+
+
+        <!--错误页面配置-->
+        <security:access-denied-handler error-page="/403.jsp" />
+    </security:http>
+
+
+    <!--开启jsr250注解支持-->
+    <!--<security:global-method-security jsr250-annotations="enabled" />-->
+
+    <!--开启SpringSecurity的Secured注解支持-->
+    <!--<security:global-method-security secured-annotations="enabled" />-->
+
+
+    <!--开启Spring注解-->
+    <security:global-method-security pre-post-annotations="enabled" />
+
+    <!--授权认证-->
+    <security:authentication-manager>
+        <!--提供账号密码-->
+        <security:authentication-provider user-service-ref="userServicesDeailImpl">
+            <!--指定加密对象-->
+            <security:password-encoder ref="encoder" />
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+
+    <!--配置加密对象-->
+    <bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="encoder" />
+
+</beans>
