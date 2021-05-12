@@ -33,7 +33,7 @@
     <druid.version>1.0.9</druid.version>
     <jackson-version>2.9.6</jackson-version>
     <pagehelper.version>5.1.2</pagehelper.version>
-    <spring.security.version>5.0.1.RELEASE</spring.security.version>
+    <spring.security.version>5.2.10.RELEASE</spring.security.version>
     <jsr250.version>1.0</jsr250.version>
     <!--文件的编码格式-->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
